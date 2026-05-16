@@ -1,0 +1,19 @@
+VIB-01: Natural Frequency Resonance — Analysis Report
+========================================================
+  Natural Frequency (fn)  : 0.27 Hz
+  Mean Amplitude          : 2.520485 g
+  Median Amplitude        : 2.520837 g
+  Std Deviation           : 0.007687 g
+  Variance                : 0.000059 g²
+  Skewness                : 0.1277
+  Kurtosis                : 4.0691
+  IQR                     : 0.005913 g
+  Outliers (IQR method)   : 16439 (10.98%)
+--------------------------------------------------------
+ENGINEERING INTERPRETATION
+--------------------------------------------------------
+  Natural freq 0.3 Hz indicates the structure resonates at this frequency — external excitations near this value risk amplitude amplification.
+  Skewness 0.128 suggests the amplitude distribution is approximately symmetric — stable vibration behavior.
+  Kurtosis 4.069 indicates a leptokurtic (heavy-tailed) distribution — impulsive events present, possible bearing defects.
+  Outlier rate 11.0% is elevated — investigate for resonance events or sensor noise.
+========================================================

@@ -6,117 +6,103 @@
 
 ---
 
-## Research Topic
-**Natural Frequency Resonance Analysis** using vibration signals from a Mechanical Gear System under normal operating conditions. This pipeline detects resonance peaks, computes FFT-based natural frequencies, and performs statistical analysis on real sensor data.
+## What this project is about
+
+This project analyzes vibration signals from a mechanical gear system to find its natural frequency. I used FFT (Fast Fourier Transform) to detect resonance peaks and ran some statistical analysis on the sensor data. I picked the no-fault condition as my data slice so I could get a clean baseline of what normal gear behavior looks like.
 
 ---
 
 ## Dataset
+
 **Name:** Mechanical Gear Vibration Dataset  
 **Source:** [Kaggle — Gear Vibration Dataset](https://www.kaggle.com/datasets/hieudaotrung/gear-vibration)  
-**Description:** Vibration signals of six gear types measured under various working conditions using two sensors.
 
-### Unique Filter Applied
+The dataset has vibration readings from six gear types under different conditions, measured by two sensors. I filtered it down to only healthy gear operation:
+
 ```python
-gear_fault_desc == 'No fault'   # Only normal (healthy) gear operation
+gear_fault_desc == 'No fault'
 ```
-This ensures a unique data slice distinct from all other student submissions.
 
 ---
 
 ## Project Structure
+
 ```
 EDS_TUPM250620_DelaPena/
-├── main.py                  # Full Python pipeline (OOP, 5 modules)
-├── requirements.txt         # Required libraries
-├── README.md                # This file
+├── main.py                  # main pipeline
+├── requirements.txt
+├── README.md
 ├── data/
-│   ├── no_fault.csv         # Original dataset (filtered slice)
-│   └── dataset_cleaned.csv  # Auto-generated cleaned dataset
+│   ├── no_fault.csv         # filtered dataset
+│   └── dataset_cleaned.csv  # auto-generated after cleaning
 └── outputs/
-    ├── chart1_histogram.png      # Amplitude distribution histogram
-    ├── chart2_boxplot.png        # Normal vs Fault boxplot comparison
-    ├── chart3_fft_spectrum.png   # FFT frequency spectrum
-    ├── anim1_waveform.gif        # Animated rolling waveform
-    ├── anim2_fft_buildup.html    # Animated FFT spectrum build-up (Plotly)
-    └── summary_report.txt        # Engineering summary report
+    ├── chart1_histogram.png
+    ├── chart2_boxplot.png
+    ├── chart3_fft_spectrum.png
+    ├── anim1_waveform.gif
+    ├── anim2_fft_buildup.html
+    └── summary_report.txt
 ```
 
 ---
 
-## Pipeline Architecture
+## How the pipeline works
 
-The pipeline is built using an Object-Oriented Programming (OOP) approach with 5 distinct modules inside the `VibrationPipeline` class:
+I built this using OOP with one main class (`VibrationPipeline`) split into 5 modules:
 
-| Module | Method | Description |
-|--------|--------|-------------|
-| 1 | `ingest()` | Load and validate CSV dataset with error handling |
-| 2 | `clean()` | Remove nulls, duplicates, outliers, apply unique filter |
-| 3 | `analyze()` | NumPy statistics, FFT, correlation, comparative analysis |
-| 4a | `visualize_static()` | Generate 3 static matplotlib charts |
-| 4b | `visualize_animated()` | Generate 2 animated visualizations |
-| 5 | `print_summary()` | Engineering interpretation report |
+1. **ingest()** — loads and validates the CSV
+2. **clean()** — handles nulls, duplicates, outliers, and applies the gear filter
+3. **analyze()** — FFT, statistics, correlation
+4. **visualize_static() / visualize_animated()** — 3 static charts + 2 animations
+5. **print_summary()** — prints the engineering summary to a text file
 
 ---
 
-## Key Results
+## Results
 
 | Metric | Value |
 |--------|-------|
-| Dataset rows (raw) | 150,000 |
-| Dataset rows (cleaned) | 149,683 |
+| Raw rows | 150,000 |
+| After cleaning | 149,683 |
 | Dominant Natural Frequency | 0.27 Hz |
 | Harmonic Peaks | 167 Hz, 540 Hz, 860 Hz, 1081 Hz |
 | Mean Amplitude | 2.5205 g |
 | Std Deviation | 0.0077 g |
-| Skewness | 0.1277 (approximately symmetric) |
-| Kurtosis | 4.069 (leptokurtic — impulsive events present) |
+| Skewness | 0.1277 |
+| Kurtosis | 4.069 |
 | Outlier Rate | 10.98% |
+
+The dominant frequency came out at 0.27 Hz which is the fundamental resonance of the gear under normal conditions. The harmonic peaks at 540 Hz and 860 Hz are from gear meshing. Kurtosis of 4.07 means there are some impulsive spikes even in healthy operation — which is actually useful as a fault detection baseline. The outlier rate (10.98%) is a bit high so that's something worth looking into further.
 
 ---
 
 ## How to Run
 
-### 1. Clone the repository
 ```bash
 git clone https://github.com/DelaPena/EDS_TUPM250620_DelaPena.git
 cd EDS_TUPM250620_DelaPena
-```
-
-### 2. Install dependencies
-```bash
 pip install -r requirements.txt
 ```
 
-### 3. Place dataset
-Download `no_fault.csv` from the Kaggle link above and place it in the `data/` folder.
+Download `no_fault.csv` from the Kaggle link and drop it in the `data/` folder, then:
 
-### 4. Run the pipeline
 ```bash
 python main.py
 ```
 
-All outputs will be saved automatically to the `outputs/` folder.
+Outputs go to the `outputs/` folder automatically.
 
 ---
 
 ## Libraries Used
 
-| Library | Purpose |
-|---------|---------|
-| `numpy` | Statistical computations (mean, std, variance, FFT) |
-| `pandas` | Data loading, cleaning, filtering |
-| `matplotlib` | Static charts + animated waveform GIF |
-| `plotly` | Interactive animated FFT spectrum (HTML) |
-| `scipy` | FFT, peak detection, Pearson correlation |
-| `pillow` | GIF rendering for Matplotlib animation |
-| `kaleido` | Plotly static image export |
-
----
-
-## Engineering Interpretation
-
-The dominant natural frequency of **0.27 Hz** represents the fundamental resonance of the gear system under healthy (no-fault) conditions. Harmonic peaks at **540 Hz** and **860 Hz** indicate mechanical excitation frequencies from gear meshing. The **leptokurtic distribution (kurtosis = 4.07)** suggests occasional impulsive vibration events even in normal operation, which serves as a baseline for fault detection. The elevated outlier rate of **10.98%** warrants further investigation for early-stage resonance risk.
+- `numpy` — FFT and stats
+- `pandas` — loading and cleaning the data
+- `matplotlib` — static charts and the waveform GIF
+- `plotly` — animated FFT HTML
+- `scipy` — peak detection, Pearson correlation
+- `pillow` — for rendering the GIF
+- `kaleido` — Plotly image export
 
 ---
 
